@@ -3,6 +3,7 @@
 /// Note: the buyer can buy from any listing that is stored under owners' account
 /// For more detailed description, check readme
 module marketplace::marketplace_instant_sale_example {
+    use std::signer;
     use std::string::String;
     use aptos_std::table::Table;
     use marketplace::marketplace_listing_utils::{Self as listing_utils, Listing};
@@ -31,6 +32,25 @@ module marketplace::marketplace_instant_sale_example {
                 fee_address,
             }
         );
+    }
+
+     public entry fun update_market_config(
+        account: &signer,
+        market_fee_numerator: u64,
+        market_fee_denominator: u64,
+        fee_address: address,
+    ) acquires Config {
+        let account_addr = signer::address_of(account);
+        let configRef = borrow_global_mut<Config>(account_addr);
+        // let market_fee_denominatorRef = &mut borrow_global_mut<Config>(signer::address_of(account)).market_fee_denominator;
+        // let fee_addressRef = &mut borrow_global_mut<Config>(signer::address_of(account)).fee_address;
+
+
+        configRef.market_fee_denominator = market_fee_denominator;
+
+        configRef.market_fee_numerator = market_fee_numerator;
+
+        configRef.fee_address = fee_address;
     }
 
     struct Listings<phantom CoinType> has key {

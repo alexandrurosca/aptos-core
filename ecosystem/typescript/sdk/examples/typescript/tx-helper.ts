@@ -32,32 +32,109 @@ const {
 
   // Generates key pair for a new account
   // const account1 = new AptosAccount();
-  const account1 = new AptosAccount(Buffer.from('20fb5013959a3c6b90dca2855fecdff838e7f9c48a8fba8744997af31ef4ea51', 'hex'), 'ad18e2569e15023455410197cd0131b76e8893b7b9e68840f00282533e4babd9');
+  // const acc = new AptosAccount(Buffer.from('1b472a81dc906a0ce38977aaf1cc909da8fdabccc491c2b6386e90738a4f7348', 'hex'), 'd2d2ef928344f9fece9716c0d4df28baa5f6a88d1f8985d99acec108d3b2e4fe');
+  const acc = /*seller*/new AptosAccount(Buffer.from('e02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186', 'hex'), '5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66');
+  // const acc = /*buyer*/ new AptosAccount(Buffer.from('785aeed5f114b8651dd768980b0fb0e192aeabaa2c1c6b6c341669a12617a8e9', 'hex'), 'fb9431aa8fda0e007a4eb0f8ca8a19b89705753398c75e7b1377f7f9030e8123');
  
-  console.log({acc: account1.address().toString()})
+  // console.log({acc: seller.address().toString()})
   const token = new TypeTagStruct(StructTag.fromString("0x1::aptos_coin::AptosCoin"));
 
   // TS SDK support 3 types of transaction payloads: `EntryFunction`, `Script` and `Module`.
   // See https://aptos-labs.github.io/ts-sdk-doc/ for the details.  
+  // const entryFunctionPayload = new TransactionPayloadEntryFunction(
+  //   EntryFunction.natural(
+  //     // Fully qualified module name, `AccountAddress::ModuleName`
+  //     "0xd2d2ef928344f9fece9716c0d4df28baa5f6a88d1f8985d99acec108d3b2e4fe::marketplace_instant_sale_example",
+  //     // Module function
+  //     "initialize_market",
+  //     // The coin type to transfer
+  //     [],
+  //     // Arguments for function `transfer`: receiver account address and amount to transfer
+  //     [
+  //       BCS.bcsSerializeUint64(50),
+  //       BCS.bcsSerializeUint64(1000),
+  //       BCS.bcsToBytes(AccountAddress.fromHex(feeAcc))
+  //     ],
+  //   ),
+  // );
+
+  // const entryFunctionPayload = new TransactionPayloadEntryFunction(
+  //   EntryFunction.natural(
+  //     // Fully qualified module name, `AccountAddress::ModuleName`
+  //     "0xd2d2ef928344f9fece9716c0d4df28baa5f6a88d1f8985d99acec108d3b2e4fe::marketplace_instant_sale_example",
+  //     // Module function
+  //     "create_listing",
+  //     // The coin type to transfer
+  //     [token],
+  //     // Arguments for function `transfer`: receiver account address and amount to transfer
+  //     [
+  //       BCS.bcsToBytes(AccountAddress.fromHex('0x5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66')),
+  //       BCS.bcsSerializeBytes(Buffer.from('Martian Testnet72878')),
+  //       BCS.bcsSerializeBytes(Buffer.from('Martian NFT #72878')),
+  //       BCS.bcsSerializeUint64(0),
+  //       BCS.bcsSerializeUint64(1),
+  //       BCS.bcsSerializeUint64(35000000),
+  //       BCS.bcsSerializeUint64(0),
+  //       BCS.bcsSerializeUint64(10000000000000),
+  //       BCS.bcsSerializeUint64(10000000000001),
+  //     ],
+  //   ),
+  // );
   const entryFunctionPayload = new TransactionPayloadEntryFunction(
     EntryFunction.natural(
       // Fully qualified module name, `AccountAddress::ModuleName`
-      "0xad18e2569e15023455410197cd0131b76e8893b7b9e68840f00282533e4babd9::marketplace_instant_sale_example",
+      "0xd2d2ef928344f9fece9716c0d4df28baa5f6a88d1f8985d99acec108d3b2e4fe::marketplace_instant_sale_example",
       // Module function
-      "update_market_config",
+      "buy_listing",
       // The coin type to transfer
-      [],
+      [token],
       // Arguments for function `transfer`: receiver account address and amount to transfer
       [
-        BCS.bcsSerializeUint64(100),
-        BCS.bcsSerializeUint64(1000),
-        BCS.bcsToBytes(AccountAddress.fromHex(feeAcc))
+        BCS.bcsToBytes(AccountAddress.fromHex('0x5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66')),
+        // BCS.bcsToBytes(AccountAddress.fromHex('0xe02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186')),
+        BCS.bcsSerializeUint64(15),
       ],
     ),
   );
 
+
+  // const entryFunctionPayload = new TransactionPayloadEntryFunction(
+  //   EntryFunction.natural(
+  //     // Fully qualified module name, `AccountAddress::ModuleName`
+  //     "0xd2d2ef928344f9fece9716c0d4df28baa5f6a88d1f8985d99acec108d3b2e4fe::marketplace_instant_sale_example",
+  //     // Module function
+  //     "remove_listing",
+  //     // The coin type to transfer
+  //     [token],
+  //     // Arguments for function `transfer`: receiver account address and amount to transfer
+  //     [
+  //       // BCS.bcsToBytes(AccountAddress.fromHex('0x5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66')),
+  //       // BCS.bcsToBytes(AccountAddress.fromHex('0xe02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186')),
+  //       BCS.bcsSerializeUint64(15),
+  //     ],
+  //   ),
+  // );
+
+  // const entryFunctionPayload = new TransactionPayloadEntryFunction(
+  //   EntryFunction.natural(
+  //     // Fully qualified module name, `AccountAddress::ModuleName`
+  //     "0xd2d2ef928344f9fece9716c0d4df28baa5f6a88d1f8985d99acec108d3b2e4fe::marketplace_instant_sale_example",
+  //     // Module function
+  //     "change_listing",
+  //     // The coin type to transfer
+  //     [token],
+  //     // Arguments for function `transfer`: receiver account address and amount to transfer
+  //     [
+  //       // BCS.bcsToBytes(AccountAddress.fromHex('0x5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66')),
+  //       // BCS.bcsToBytes(AccountAddress.fromHex('0xe02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186')),
+  //       BCS.bcsSerializeUint64(15),
+  //       BCS.bcsSerializeUint64(45000000),
+  //     ],
+  //   ),
+  // );
+
   const [{ sequence_number: sequenceNumber }, chainId] = await Promise.all([
-    client.getAccount(account1.address()),
+    client.getAccount(acc.address()),
     client.getChainId(),
   ]);
 
@@ -69,11 +146,11 @@ const {
   // https://aptos-labs.github.io/ts-sdk-doc/classes/TxnBuilderTypes.RawTransaction.html#constructor.
   const rawTxn = new RawTransaction(
     // Transaction sender account address
-    AccountAddress.fromHex(account1.address()),
+    AccountAddress.fromHex(acc.address()),
     BigInt(sequenceNumber),
     entryFunctionPayload,
     // Max gas unit to spend
-    BigInt(2000),
+    BigInt(20000),
     // Gas price per unit
     BigInt(100),
     // Expiration timestamp. Transaction is discarded if it is not executed within 10 seconds from now.
@@ -82,11 +159,12 @@ const {
   );
 
   // Sign the raw transaction with account1's private key
-  const bcsTxn = AptosClient.generateBCSTransaction(account1, rawTxn);
+  const bcsTxn = AptosClient.generateBCSTransaction(acc, rawTxn);
 
   const transactionRes = await client.submitSignedBCSTransaction(bcsTxn);
 
   console.log({tx: transactionRes.hash})
 
-  await client.waitForTransaction(transactionRes.hash);
+  const response = await client.waitForTransactionWithResult(transactionRes.hash);
+  console.log({status: (response as any)?.success, log: (response as any)?.vm_status})
 })();

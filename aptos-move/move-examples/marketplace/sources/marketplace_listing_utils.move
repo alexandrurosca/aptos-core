@@ -104,16 +104,17 @@ module marketplace::marketplace_listing_utils {
     }
 
     /// remove a listing for the direct listing records
-    public entry fun cancel_direct_listing<CoinType>(
+    public fun cancel_direct_listing<CoinType>(
         owner: &signer,
         listing_id_creation_number: u64
-    ) acquires ListingRecords {
+    ): Listing<CoinType> acquires ListingRecords {
         let listing_id = guid::create_id(signer::address_of(owner), listing_id_creation_number);
         let owner_addr = signer::address_of(owner);
         let records = borrow_global_mut<ListingRecords<CoinType>>(owner_addr);
         assert!(table::contains(&records.records, listing_id), error::not_found(ELISTING_NOT_EXIST));
-        table::remove(&mut records.records, listing_id);
+        // let old_listing = table::borrow(records.records, listing_id);
 
+        // add more info
         event::emit_event<CancelListingEvent>(
             &mut records.cancel_listing_event,
             CancelListingEvent {
@@ -121,6 +122,35 @@ module marketplace::marketplace_listing_utils {
                 market_address: signer::address_of(owner),
             },
         );
+        table::remove(&mut records.records, listing_id)
+    }
+
+    /// remove a listing for the direct listing records
+    public entry fun change_price_listing<CoinType>(
+        owner: &signer,
+        listing_creation_number: u64,
+        new_price: u64
+    ) acquires ListingRecords {
+         let old_listing = cancel_direct_listing<CoinType>(
+            owner,
+            listing_creation_number
+        );
+
+        let (creator, collection_name, token_name, property_version) = token::get_token_id_fields(&old_listing.token_id);
+
+        direct_listing<CoinType>(
+            owner,
+            creator,
+            collection_name,
+            token_name,
+            property_version,
+            old_listing.amount,
+            new_price,
+            true,
+            old_listing.start_sec,
+            old_listing.expiration_sec,
+            old_listing.expiration_sec + 1,
+        )
     }
 
     //
@@ -201,6 +231,7 @@ module marketplace::marketplace_listing_utils {
         initialize_listing_records<CoinType>(owner);
         let records = borrow_global_mut<ListingRecords<CoinType>>(owner_addr);
 
+        // replace if already have listing => changePrice
         let id = create_listing_id(owner);
         // add a new record to the listing
         table::add(&mut records.records, id, record);
@@ -348,6 +379,7 @@ module marketplace::marketplace_listing_utils {
     #[test(owner = @marketplace)]
     public fun test_cancel_listing(owner: signer)acquires ListingRecords {
         use aptos_framework::coin;
+        use std::debug;
 
         account::create_account_for_test(signer::address_of(&owner));
         let token_id = token::create_collection_and_token(
@@ -371,6 +403,8 @@ module marketplace::marketplace_listing_utils {
             10000,
             10001,
         );
+        debug::print(&listing_id);
+        debug::print(&guid::id_creation_num(&listing_id));
         cancel_direct_listing<coin::FakeMoney>(&owner, guid::id_creation_num(&listing_id));
     }
 

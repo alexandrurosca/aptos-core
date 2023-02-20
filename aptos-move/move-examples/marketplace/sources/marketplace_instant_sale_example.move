@@ -40,6 +40,7 @@ module marketplace::marketplace_instant_sale_example {
         market_fee_denominator: u64,
         fee_address: address,
     ) acquires Config {
+        // todo: add checks
         let account_addr = signer::address_of(account);
         let configRef = borrow_global_mut<Config>(account_addr);
         // let market_fee_denominatorRef = &mut borrow_global_mut<Config>(signer::address_of(account)).market_fee_denominator;
@@ -57,7 +58,7 @@ module marketplace::marketplace_instant_sale_example {
         all_active_Listings: Table<ID, Listing<CoinType>>,
     }
 
-    public entry fun creat_listing<CoinType>(
+    public entry fun create_listing<CoinType>(
         owner: &signer,
         creator: address,
         collection_name: String,
@@ -81,6 +82,28 @@ module marketplace::marketplace_instant_sale_example {
             start_sec,
             expiration_sec,
             withdraw_expiration_sec,
+        );
+    }
+
+    public entry fun remove_listing<CoinType>(
+        owner: &signer,
+        listing_creation_number: u64,
+    ) {
+        listing_utils::cancel_direct_listing<CoinType>(
+            owner,
+            listing_creation_number
+        );
+    }
+
+    public entry fun change_listing<CoinType>(
+        owner: &signer,
+        listing_creation_number: u64,
+        new_price: u64
+    ) {
+        listing_utils::change_price_listing<CoinType>(
+            owner,
+            listing_creation_number,
+            new_price
         );
     }
 

@@ -52,18 +52,20 @@ module marketplace::marketplace_listing_utils {
         id: ID,
         token_id: TokenId,
         amount: u64,
-        min_price: u64,
+        price: u64,
         instant_sale: bool,
         start_sec: u64,
         expiration_sec: u64,
         withdraw_sec: u64,
-        market_address: address,
+        seller: address,
         config: PropertyMap,
     }
 
     struct CancelListingEvent has copy, drop, store {
         id: ID,
-        market_address: address,
+        seller: address,
+        token_id: TokenId,
+        price: u64,
     }
 
     /// store listings on the owner's account
@@ -115,15 +117,20 @@ module marketplace::marketplace_listing_utils {
         assert!(table::contains(&records.records, listing_id), error::not_found(ELISTING_NOT_EXIST));
         // let old_listing = table::borrow(records.records, listing_id);
 
+        
+        let removed_listing = table::remove(&mut records.records, listing_id);
         // add more info
         event::emit_event<CancelListingEvent>(
             &mut records.cancel_listing_event,
             CancelListingEvent {
                 id: listing_id,
-                market_address: signer::address_of(owner),
+                token_id: removed_listing.token_id,
+                price: removed_listing.min_price,
+                seller: signer::address_of(owner),
             },
         );
-        table::remove(&mut records.records, listing_id)
+
+        removed_listing
     }
 
     public fun change_price_listing<CoinType>(
@@ -242,12 +249,12 @@ module marketplace::marketplace_listing_utils {
                 id,
                 token_id,
                 amount,
-                min_price,
+                price: min_price,
                 instant_sale,
                 start_sec,
                 expiration_sec,
                 withdraw_sec: withdraw_expiration_sec,
-                market_address: owner_addr,
+                seller: owner_addr,
                 config: property_map::empty(),
             },
         );
@@ -325,16 +332,16 @@ module marketplace::marketplace_listing_utils {
         id: ID,
         token_id: TokenId,
         amount: u64,
-        min_price: u64,
+        price: u64,
         instant_sale: bool,
         start_sec: u64,
         expiration_sec: u64,
         withdraw_sec: u64,
-        market_address: address,
+        seller: address,
         config: PropertyMap
     ): ListingEvent {
         ListingEvent {
-            id, token_id, amount, min_price, instant_sale, start_sec, expiration_sec, withdraw_sec, market_address, config
+            id, token_id, amount, price, instant_sale, start_sec, expiration_sec, withdraw_sec, seller, config
         }
     }
 

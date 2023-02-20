@@ -8,7 +8,7 @@ module marketplace::marketplace_bid_utils {
     use aptos_framework::timestamp;
     use aptos_std::guid::{Self, ID};
     use aptos_std::table::{Self, Table};
-    use aptos_token::token::{Self};
+    use aptos_token::token::{Self, TokenId};
     use marketplace::marketplace_listing_utils::{Self as listing_util, Listing};
     use std::signer;
     use std::error;
@@ -95,10 +95,11 @@ module marketplace::marketplace_bid_utils {
 
     struct OrderExecutedEvent<phantom CoinType> has copy, drop, store {
         buyer: address,
-        lister_address: address,
-        listing_creation_number: u64,
-        executed_price: u64,
+        seller: address,
+        price: u64,
+        token_id: TokenId,
         market_place_address: address,
+        listing_creation_number: u64,
     }
 
     //
@@ -213,6 +214,7 @@ module marketplace::marketplace_bid_utils {
             guid::id_creation_num(&id),
             min_price,
             market_fund_address,
+            token_id,
         );
     }
 
@@ -463,19 +465,21 @@ module marketplace::marketplace_bid_utils {
 
     fun emit_order_executed_event<CoinType>(
         buyer: address,
-        lister_address: address,
+        seller: address,
         listing_creation_number: u64,
-        executed_price: u64,
+        price: u64,
         market_place_address: address,
+        token_id: TokenId
     ) acquires BidRecords {
         let records = borrow_global_mut<BidRecords<CoinType>>(buyer);
         event::emit_event<OrderExecutedEvent<CoinType>>(
             &mut records.order_executed_event,
             OrderExecutedEvent<CoinType> {
                 buyer,
-                lister_address,
+                seller,
+                price,
+                token_id,
                 listing_creation_number,
-                executed_price,
                 market_place_address,
             },
         );

@@ -27,8 +27,8 @@ const {
  * This code example demonstrates the process of moving test coins from one account to another.
  */
 (async () => {
-  const MARKET = 'c525b9881ca5d1887c8340b06d30a596ea6ec45e0a621d2ed85a5ec63f23f64a'
-  const MARKET_PK = '02889366abe51d51c172e672bc58289b93807ce22183f1610ccbfd8c9d97ab7d'
+  const MARKET = '375550e8a77e7fab68efe9641647cccca51681da0fcbefed906008cc4e9700f5'
+  const MARKET_PK = '4af7091e8286bf686296f979fa6a97ef5ebdb51ecb010f768d0e0a8a8957f1ad'
 
   const client = new AptosClient(NODE_URL);
   const faucetClient = new FaucetClient(NODE_URL, FAUCET_URL);
@@ -38,8 +38,8 @@ const {
   // Generates key pair for a new account
   // const account1 = new AptosAccount();
   // const acc = new AptosAccount(Buffer.from(MARKET_PK, 'hex'), MARKET);
-  // const acc = /*seller*/new AptosAccount(Buffer.from('e02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186', 'hex'), '5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66');
-  const acc = /*buyer*/ new AptosAccount(Buffer.from('785aeed5f114b8651dd768980b0fb0e192aeabaa2c1c6b6c341669a12617a8e9', 'hex'), 'fb9431aa8fda0e007a4eb0f8ca8a19b89705753398c75e7b1377f7f9030e8123');
+  const acc = /*seller*/new AptosAccount(Buffer.from('e02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186', 'hex'), '5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66');
+  // const acc = /*buyer*/ new AptosAccount(Buffer.from('785aeed5f114b8651dd768980b0fb0e192aeabaa2c1c6b6c341669a12617a8e9', 'hex'), 'fb9431aa8fda0e007a4eb0f8ca8a19b89705753398c75e7b1377f7f9030e8123');
  
   // console.log({acc: seller.address().toString()})
   const token = new TypeTagStruct(StructTag.fromString("0x1::aptos_coin::AptosCoin"));
@@ -78,7 +78,7 @@ const {
   //       BCS.bcsSerializeBytes(Buffer.from('Martian NFT #72878')),
   //       BCS.bcsSerializeUint64(0),
   //       // BCS.bcsSerializeUint64(1),
-  //       BCS.bcsSerializeUint64(35000000),
+  //       BCS.bcsSerializeUint64(12000000),
   //       // BCS.bcsSerializeUint64(0),
   //       // BCS.bcsSerializeUint64(10000000000000),
   //       // BCS.bcsSerializeUint64(10000000000001),
@@ -95,9 +95,9 @@ const {
       [token],
       // Arguments for function `transfer`: receiver account address and amount to transfer
       [
-        BCS.bcsToBytes(AccountAddress.fromHex('0x5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66')),
+        BCS.bcsToBytes(AccountAddress.fromHex('0xfb9431aa8fda0e007a4eb0f8ca8a19b89705753398c75e7b1377f7f9030e8123')),
         // BCS.bcsToBytes(AccountAddress.fromHex('0xe02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186')),
-        BCS.bcsSerializeUint64(24),
+        BCS.bcsSerializeUint64(35),
       ],
     ),
   );
@@ -115,7 +115,7 @@ const {
   //     [
   //       // BCS.bcsToBytes(AccountAddress.fromHex('0x5964cbf9198fb32e601657b1e31eba60c227c682306b657ac16fb584feefca66')),
   //       // BCS.bcsToBytes(AccountAddress.fromHex('0xe02d26d9124f1086518bf4d1706505fc2dab6a2930c36c8ec46c3f4ed77eb186')),
-  //       BCS.bcsSerializeUint64(15),
+  //       BCS.bcsSerializeUint64(25),
   //     ],
   //   ),
   // );
